@@ -1,0 +1,81 @@
+\documentclass[12pt]{article}
+
+\usepackage[a4paper, hmargin={2cm, 2cm}, vmargin={2cm, 2cm}]{geometry}
+\usepackage{amsmath} % Til generel matematik
+\usepackage{setspace} % Til margin specifikation
+\usepackage[utf8]{inputenc} % Til ÆæØøÅå
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage[bottom]{footmisc}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{csquotes}
+\usepackage{enumerate}
+\usepackage[hidelinks]{hyperref}
+\usepackage{tikz}
+\usepackage{amssymb}
+\usepackage{pdflscape}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{relsize}
+
+\DeclareGraphicsExtensions{.png,.eps}
+
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\setlength{\parindent}{0pt}
+\setlength{\extrarowheight}{2pt}
+\onehalfspacing
+
+
+\begin{document}
+
+\title{Multiplayer Elo-Ranking System for BB\&B}
+\author{Mathias Pedersen Heinze}
+\date{\today}
+\maketitle
+
+\begin{abstract}
+	This note documents the implementation of the Elo-ranking system for the BB\&B board game club. It is a straight forward implementation of the well-known Elo-ranking system, developed to rank chess players. We apply the standard trick of permuting all participants in multi-player settings.
+\end{abstract}
+\vspace{20pt}
+
+The new rank $R'$ for player $A$ is calculated as
+
+\begin{equation}
+	R'_A=R_A+K(S_A-E_A)
+\end{equation}
+
+where $R_A$ is player $A$'s previous rank, $K$ is a weighting factor, $S_A$ is the score of the player, and $E_A$ is the predicted probability of player $A$ winning the game. The score, $S_A$ depends on the number of participants in the game. Calculate the combinations as
+
+\begin{equation}
+	\rho=\frac{n(n-1)}{2},
+\end{equation}
+
+which is the total number of one-on-one match ups in the game. $S_A$ is then given by
+
+\begin{equation}
+	S_A=\frac{1}{\rho}(n-\alpha_A),
+\end{equation}
+
+where $\alpha$ is the score of player $A$ in the game (i.e. \textit{first}, \textit{second}, \textit{third}...). Subtract this score by the expected score of the player, given by
+
+\begin{equation}
+	E_A=\frac{1}{\rho}\mathlarger{\mathlarger{\sum}}_{1\geq i \geq n,i\ne A}\bigg[1+b^{(R_i-R_A)/c}\bigg]^{-1}.
+\end{equation}
+
+Finally, the $K$ factor is a function of the relative size of the game in terms of participants and the number of games played by player $A$
+
+\begin{equation}
+	K=\frac{a}{m_A^{1/2}+(N-n)^2},
+\end{equation}
+
+where $m$ is the total number of previous games played by player $A$, $N$ is the maximum game size, and $n$ is once again the number of players in the specific game. $a$, $b$ and $c$ are constants to be calibrated.
+
+
+
+
+
+\end{document}
